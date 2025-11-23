@@ -1,6 +1,12 @@
 <div class="tasks-container">
   <div class="tasks-header">
-    <h1>Task Board</h1>
+    <div class="header-top">
+      <h1>Task Board</h1>
+      <button mat-raised-button color="primary" (click)="openAddTaskDialog()">
+        <mat-icon>add</mat-icon>
+        Add Task
+      </button>
+    </div>
     <div class="task-stats">
       <span class="stat">Total: {{ taskStats().total }}</span>
       <span class="stat todo">To Do: {{ taskStats().todo }}</span>
@@ -39,6 +45,12 @@
               </div>
             </mat-card-content>
             <mat-card-actions>
+              <button
+                mat-icon-button
+                (click)="openEditTaskDialog(task)"
+                matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
               <button
                 mat-icon-button
                 color="primary"
@@ -91,6 +103,12 @@
               </div>
             </mat-card-content>
             <mat-card-actions>
+              <button
+                mat-icon-button
+                (click)="openEditTaskDialog(task)"
+                matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
               <button
                 mat-icon-button
                 (click)="updateTaskStatus(task.id, 'todo')"
@@ -149,6 +167,12 @@
               </div>
             </mat-card-content>
             <mat-card-actions>
+              <button
+                mat-icon-button
+                (click)="openEditTaskDialog(task)"
+                matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
               <button
                 mat-icon-button
                 (click)="updateTaskStatus(task.id, 'in-progress')"

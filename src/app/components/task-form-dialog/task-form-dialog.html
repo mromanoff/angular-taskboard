@@ -1,0 +1,82 @@
+<h2 mat-dialog-title>{{ getDialogTitle() }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="taskForm" class="task-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" placeholder="Enter task title" required>
+      @if (title?.invalid && title?.touched) {
+        <mat-error>
+          @if (title?.hasError('required')) {
+            Title is required
+          }
+          @if (title?.hasError('minlength')) {
+            Title must be at least 3 characters
+          }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        placeholder="Enter task description"
+        rows="4"
+        required></textarea>
+      @if (description?.invalid && description?.touched) {
+        <mat-error>
+          @if (description?.hasError('required')) {
+            Description is required
+          }
+          @if (description?.hasError('minlength')) {
+            Description must be at least 10 characters
+          }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Priority</mat-label>
+        <mat-select formControlName="priority" required>
+          @for (priority of priorities; track priority) {
+            <mat-option [value]="priority">
+              {{ priority | titlecase }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" required>
+          @for (status of statuses; track status) {
+            <mat-option [value]="status">
+              {{ status === 'in-progress' ? 'In Progress' : (status | titlecase) }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Due Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dueDate" placeholder="Select due date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="!taskForm.valid">
+    {{ getSubmitButtonText() }}
+  </button>
+</mat-dialog-actions>
