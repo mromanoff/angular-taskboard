@@ -5,8 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskService } from '../../services/task.service';
 import { Task, TaskStatus } from '../../models/task.model';
+import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form-dialog/task-form-dialog';
 
 @Component({
   selector: 'app-tasks',
@@ -17,12 +19,14 @@ import { Task, TaskStatus } from '../../models/task.model';
     MatIconModule,
     MatChipsModule,
     MatTooltipModule,
+    MatDialogModule,
   ],
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
 })
 export class Tasks {
   private taskService = inject(TaskService);
+  private dialog = inject(MatDialog);
 
   // Expose computed signals for template
   tasksByStatus = this.taskService.tasksByStatus;
@@ -55,5 +59,31 @@ export class Tasks {
   formatDate(date: Date | null): string {
     if (!date) return 'No due date';
     return new Date(date).toLocaleDateString();
+  }
+
+  openAddTaskDialog(): void {
+    const dialogRef = this.dialog.open(TaskFormDialog, {
+      width: '600px',
+      data: { mode: 'create' } as TaskFormDialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((result: TaskFormResult | undefined) => {
+      if (result) {
+        this.taskService.addTask(result);
+      }
+    });
+  }
+
+  openEditTaskDialog(task: Task): void {
+    const dialogRef = this.dialog.open(TaskFormDialog, {
+      width: '600px',
+      data: { task, mode: 'edit' } as TaskFormDialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((result: TaskFormResult | undefined) => {
+      if (result) {
+        this.taskService.updateTask(task.id, result);
+      }
+    });
   }
 }
