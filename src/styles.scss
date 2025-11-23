@@ -4,16 +4,13 @@
 
 @include mat.core();
 
-$my-primary: mat.define-palette(mat.$indigo-palette, 500);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-
-$my-theme: mat.define-light-theme((
+// Define the theme using Angular Material 21 API (Material 3)
+$my-theme: mat.define-theme((
   color: (
-    primary: $my-primary,
-    accent: $my-accent,
+    theme-type: light,
+    primary: mat.$violet-palette,
+    tertiary: mat.$rose-palette,
   ),
-  typography: mat.define-typography-config(),
-  density: 0,
 ));
 
 @include mat.all-component-themes($my-theme);
