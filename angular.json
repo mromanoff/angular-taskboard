@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-taskboard-temp": {
+    "angular-taskboard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-taskboard-temp:build:production"
+              "buildTarget": "angular-taskboard:build:production"
             },
             "development": {
-              "buildTarget": "angular-taskboard-temp:build:development"
+              "buildTarget": "angular-taskboard:build:development"
             }
           },
           "defaultConfiguration": "development"

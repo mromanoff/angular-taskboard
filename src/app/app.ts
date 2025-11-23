@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('angular-taskboard-temp');
+  protected readonly title = signal('angular-taskboard');
 }
