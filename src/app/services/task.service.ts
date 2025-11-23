@@ -1,16 +1,92 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Task, TaskStatus, TaskPriority } from '../models/task.model';
 
+export type SortOption = 'priority-desc' | 'priority-asc' | 'due-date-asc' | 'due-date-desc' | 'created-desc' | 'created-asc';
+
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
   private tasksSignal = signal<Task[]>(this.getInitialTasks());
 
+  // Filter and sort state
+  private filterPrioritySignal = signal<TaskPriority | 'all'>('all');
+  private filterStatusSignal = signal<TaskStatus | 'all'>('all');
+  private filterOverdueSignal = signal<boolean>(false);
+  private sortOptionSignal = signal<SortOption>('priority-desc');
+
   readonly tasks = this.tasksSignal.asReadonly();
+  readonly filterPriority = this.filterPrioritySignal.asReadonly();
+  readonly filterStatus = this.filterStatusSignal.asReadonly();
+  readonly filterOverdue = this.filterOverdueSignal.asReadonly();
+  readonly sortOption = this.sortOptionSignal.asReadonly();
+
+  // Filtered and sorted tasks
+  private filteredAndSortedTasks = computed(() => {
+    let tasks = this.tasksSignal();
+    const filterPriority = this.filterPrioritySignal();
+    const filterStatus = this.filterStatusSignal();
+    const filterOverdue = this.filterOverdueSignal();
+    const sortOption = this.sortOptionSignal();
+
+    // Apply filters
+    if (filterPriority !== 'all') {
+      tasks = tasks.filter(task => task.priority === filterPriority);
+    }
+
+    if (filterStatus !== 'all') {
+      tasks = tasks.filter(task => task.status === filterStatus);
+    }
+
+    if (filterOverdue) {
+      const now = new Date();
+      tasks = tasks.filter(task =>
+        task.dueDate && new Date(task.dueDate) < now && task.status !== 'done'
+      );
+    }
+
+    // Apply sorting
+    const sortedTasks = [...tasks];
+    const priorityOrder: Record<TaskPriority, number> = { high: 3, medium: 2, low: 1 };
+
+    switch (sortOption) {
+      case 'priority-desc':
+        sortedTasks.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+        break;
+      case 'priority-asc':
+        sortedTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+        break;
+      case 'due-date-asc':
+        sortedTasks.sort((a, b) => {
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        });
+        break;
+      case 'due-date-desc':
+        sortedTasks.sort((a, b) => {
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+        });
+        break;
+      case 'created-asc':
+        sortedTasks.sort((a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        break;
+      case 'created-desc':
+        sortedTasks.sort((a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        break;
+    }
+
+    return sortedTasks;
+  });
 
   readonly tasksByStatus = computed(() => {
-    const tasks = this.tasksSignal();
+    const tasks = this.filteredAndSortedTasks();
     return {
       todo: tasks.filter(task => task.status === 'todo'),
       inProgress: tasks.filter(task => task.status === 'in-progress'),
@@ -75,6 +151,28 @@ export class TaskService {
 
   updateTaskStatus(id: string, status: TaskStatus): Task | undefined {
     return this.updateTask(id, { status });
+  }
+
+  setFilterPriority(priority: TaskPriority | 'all'): void {
+    this.filterPrioritySignal.set(priority);
+  }
+
+  setFilterStatus(status: TaskStatus | 'all'): void {
+    this.filterStatusSignal.set(status);
+  }
+
+  setFilterOverdue(overdue: boolean): void {
+    this.filterOverdueSignal.set(overdue);
+  }
+
+  setSortOption(option: SortOption): void {
+    this.sortOptionSignal.set(option);
+  }
+
+  clearFilters(): void {
+    this.filterPrioritySignal.set('all');
+    this.filterStatusSignal.set('all');
+    this.filterOverdueSignal.set(false);
   }
 
   private generateId(): string {

@@ -18,6 +18,61 @@
     </div>
   </div>
 
+  <!-- Filter and Sort Controls -->
+  <div class="filter-sort-container">
+    <div class="filters">
+      <h3><mat-icon>filter_list</mat-icon> Filters</h3>
+      <div class="filter-controls">
+        <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select [value]="filterPriority()" (selectionChange)="onFilterPriorityChange($event.value)">
+            <mat-option value="all">All Priorities</mat-option>
+            <mat-option value="high">High</mat-option>
+            <mat-option value="medium">Medium</mat-option>
+            <mat-option value="low">Low</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [value]="filterStatus()" (selectionChange)="onFilterStatusChange($event.value)">
+            <mat-option value="all">All Statuses</mat-option>
+            <mat-option value="todo">To Do</mat-option>
+            <mat-option value="in-progress">In Progress</mat-option>
+            <mat-option value="done">Done</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-checkbox
+          [checked]="filterOverdue()"
+          (change)="onFilterOverdueChange($event.checked)"
+          class="overdue-checkbox">
+          Show Only Overdue
+        </mat-checkbox>
+
+        <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <div class="sort">
+      <h3><mat-icon>sort</mat-icon> Sort By</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Sort Option</mat-label>
+        <mat-select [value]="sortOption()" (selectionChange)="onSortOptionChange($event.value)">
+          <mat-option value="priority-desc">Priority: High to Low</mat-option>
+          <mat-option value="priority-asc">Priority: Low to High</mat-option>
+          <mat-option value="due-date-asc">Due Date: Earliest First</mat-option>
+          <mat-option value="due-date-desc">Due Date: Latest First</mat-option>
+          <mat-option value="created-desc">Created: Newest First</mat-option>
+          <mat-option value="created-asc">Created: Oldest First</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
   <div class="kanban-board">
     <!-- TO DO Column -->
     <div class="kanban-column">
