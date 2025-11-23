@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -27,6 +28,7 @@ import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form
     MatDialogModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatInputModule,
     MatCheckboxModule,
     FormsModule,
     DragDropModule,
@@ -47,6 +49,7 @@ export class Tasks {
   filterStatus = this.taskService.filterStatus;
   filterOverdue = this.taskService.filterOverdue;
   sortOption = this.taskService.sortOption;
+  searchQuery = this.taskService.searchQuery;
 
   deleteTask(id: string): void {
     if (confirm('Are you sure you want to delete this task?')) {
@@ -133,5 +136,14 @@ export class Tasks {
 
   clearFilters(): void {
     this.taskService.clearFilters();
+  }
+
+  onSearchQueryChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.taskService.setSearchQuery(input.value);
+  }
+
+  clearSearch(): void {
+    this.taskService.setSearchQuery('');
   }
 }

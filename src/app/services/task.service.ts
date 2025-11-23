@@ -24,12 +24,14 @@ export class TaskService {
   private filterStatusSignal = signal<TaskStatus | 'all'>('all');
   private filterOverdueSignal = signal<boolean>(false);
   private sortOptionSignal = signal<SortOption>('priority-desc');
+  private searchQuerySignal = signal<string>('');
 
   readonly tasks = this.tasksSignal.asReadonly();
   readonly filterPriority = this.filterPrioritySignal.asReadonly();
   readonly filterStatus = this.filterStatusSignal.asReadonly();
   readonly filterOverdue = this.filterOverdueSignal.asReadonly();
   readonly sortOption = this.sortOptionSignal.asReadonly();
+  readonly searchQuery = this.searchQuerySignal.asReadonly();
 
   // Filtered and sorted tasks
   private filteredAndSortedTasks = computed(() => {
@@ -38,6 +40,7 @@ export class TaskService {
     const filterStatus = this.filterStatusSignal();
     const filterOverdue = this.filterOverdueSignal();
     const sortOption = this.sortOptionSignal();
+    const searchQuery = this.searchQuerySignal().toLowerCase().trim();
 
     // Apply filters
     if (filterPriority !== 'all') {
@@ -53,6 +56,15 @@ export class TaskService {
       tasks = tasks.filter(task =>
         task.dueDate && new Date(task.dueDate) < now && task.status !== 'done'
       );
+    }
+
+    // Apply search filter
+    if (searchQuery) {
+      tasks = tasks.filter(task => {
+        const titleMatch = task.title.toLowerCase().includes(searchQuery);
+        const descriptionMatch = task.description?.toLowerCase().includes(searchQuery);
+        return titleMatch || descriptionMatch;
+      });
     }
 
     // Apply sorting
@@ -179,10 +191,15 @@ export class TaskService {
     this.sortOptionSignal.set(option);
   }
 
+  setSearchQuery(query: string): void {
+    this.searchQuerySignal.set(query);
+  }
+
   clearFilters(): void {
     this.filterPrioritySignal.set('all');
     this.filterStatusSignal.set('all');
     this.filterOverdueSignal.set(false);
+    this.searchQuerySignal.set('');
   }
 
   private generateId(): string {
