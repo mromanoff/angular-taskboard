@@ -248,6 +248,43 @@
   }
 }
 
+// Drag and drop styles
+.cdk-drag-preview {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+  opacity: 0.9;
+  transform: rotate(2deg);
+  cursor: grabbing !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  background: #e0e0e0;
+  border: 2px dashed #9e9e9e;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.column-content.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.task-card.cdk-drag {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Visual feedback for valid drop zones
+.column-content.cdk-drop-list-receiving {
+  background-color: rgba(103, 126, 234, 0.1);
+  border: 2px dashed #667eea;
+  border-radius: 8px;
+}
+
 // Responsive design
 @media (max-width: 1200px) {
   .kanban-board {
