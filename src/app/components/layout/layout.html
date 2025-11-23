@@ -11,6 +11,13 @@
         <mat-icon>task</mat-icon>
         Tasks
       </a>
+      <button
+        mat-icon-button
+        (click)="toggleTheme()"
+        [matTooltip]="theme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+        aria-label="Toggle theme">
+        <mat-icon>{{ theme() === 'light' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      </button>
     </nav>
   </mat-toolbar-row>
 </mat-toolbar>
