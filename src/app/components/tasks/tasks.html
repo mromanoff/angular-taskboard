@@ -1,4 +1,177 @@
 <div class="tasks-container">
-  <h1>Tasks</h1>
-  <p>Your task list will be displayed here. You'll be able to create, edit, and manage tasks.</p>
+  <div class="tasks-header">
+    <h1>Task Board</h1>
+    <div class="task-stats">
+      <span class="stat">Total: {{ taskStats().total }}</span>
+      <span class="stat todo">To Do: {{ taskStats().todo }}</span>
+      <span class="stat in-progress">In Progress: {{ taskStats().inProgress }}</span>
+      <span class="stat done">Done: {{ taskStats().done }}</span>
+      <span class="stat overdue" *ngIf="taskStats().overdue > 0">
+        Overdue: {{ taskStats().overdue }}
+      </span>
+    </div>
+  </div>
+
+  <div class="kanban-board">
+    <!-- TO DO Column -->
+    <div class="kanban-column">
+      <div class="column-header todo-header">
+        <mat-icon>list</mat-icon>
+        <h2>To Do</h2>
+        <span class="count">{{ tasksByStatus().todo.length }}</span>
+      </div>
+      <div class="column-content">
+        @for (task of tasksByStatus().todo; track task.id) {
+          <mat-card class="task-card">
+            <mat-card-header>
+              <mat-card-title>{{ task.title }}</mat-card-title>
+              <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
+                {{ task.priority }}
+              </mat-chip>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="task-description">{{ task.description }}</p>
+              <div class="task-meta">
+                <span class="due-date" [class.overdue]="isOverdue(task)">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDate(task.dueDate) }}
+                </span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="updateTaskStatus(task.id, 'in-progress')"
+                matTooltip="Start Task">
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteTask(task.id)"
+                matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+        @empty {
+          <div class="empty-state">
+            <mat-icon>check_circle</mat-icon>
+            <p>No tasks to do</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- IN PROGRESS Column -->
+    <div class="kanban-column">
+      <div class="column-header in-progress-header">
+        <mat-icon>schedule</mat-icon>
+        <h2>In Progress</h2>
+        <span class="count">{{ tasksByStatus().inProgress.length }}</span>
+      </div>
+      <div class="column-content">
+        @for (task of tasksByStatus().inProgress; track task.id) {
+          <mat-card class="task-card">
+            <mat-card-header>
+              <mat-card-title>{{ task.title }}</mat-card-title>
+              <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
+                {{ task.priority }}
+              </mat-chip>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="task-description">{{ task.description }}</p>
+              <div class="task-meta">
+                <span class="due-date" [class.overdue]="isOverdue(task)">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDate(task.dueDate) }}
+                </span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-icon-button
+                (click)="updateTaskStatus(task.id, 'todo')"
+                matTooltip="Move to To Do">
+                <mat-icon>arrow_back</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="updateTaskStatus(task.id, 'done')"
+                matTooltip="Complete">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteTask(task.id)"
+                matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+        @empty {
+          <div class="empty-state">
+            <mat-icon>hourglass_empty</mat-icon>
+            <p>No tasks in progress</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- DONE Column -->
+    <div class="kanban-column">
+      <div class="column-header done-header">
+        <mat-icon>check_circle</mat-icon>
+        <h2>Done</h2>
+        <span class="count">{{ tasksByStatus().done.length }}</span>
+      </div>
+      <div class="column-content">
+        @for (task of tasksByStatus().done; track task.id) {
+          <mat-card class="task-card done-card">
+            <mat-card-header>
+              <mat-card-title>{{ task.title }}</mat-card-title>
+              <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
+                {{ task.priority }}
+              </mat-chip>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="task-description">{{ task.description }}</p>
+              <div class="task-meta">
+                <span class="due-date">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDate(task.dueDate) }}
+                </span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-icon-button
+                (click)="updateTaskStatus(task.id, 'in-progress')"
+                matTooltip="Reopen">
+                <mat-icon>replay</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteTask(task.id)"
+                matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+        @empty {
+          <div class="empty-state">
+            <mat-icon>pending_actions</mat-icon>
+            <p>No completed tasks</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
 </div>
