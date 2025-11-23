@@ -1,13 +1,23 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import { Task, TaskStatus, TaskPriority } from '../models/task.model';
 
 export type SortOption = 'priority-desc' | 'priority-asc' | 'due-date-asc' | 'due-date-desc' | 'created-desc' | 'created-asc';
+
+const STORAGE_KEY = 'angular-taskboard-tasks';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
   private tasksSignal = signal<Task[]>(this.getInitialTasks());
+
+  constructor() {
+    // Automatically save tasks to localStorage whenever they change
+    effect(() => {
+      const tasks = this.tasksSignal();
+      this.saveToLocalStorage(tasks);
+    });
+  }
 
   // Filter and sort state
   private filterPrioritySignal = signal<TaskPriority | 'all'>('all');
@@ -179,7 +189,35 @@ export class TaskService {
     return `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
+  private saveToLocalStorage(tasks: Task[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+      console.error('Error saving tasks to localStorage:', error);
+    }
+  }
+
+  private loadFromLocalStorage(): Task[] | null {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        return null;
+      }
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Error loading tasks from localStorage:', error);
+      return null;
+    }
+  }
+
   private getInitialTasks(): Task[] {
+    // Try to load from localStorage first
+    const storedTasks = this.loadFromLocalStorage();
+    if (storedTasks && storedTasks.length > 0) {
+      return storedTasks;
+    }
+
+    // Return sample tasks if nothing in localStorage
     return [
       {
         id: 'task-1',
