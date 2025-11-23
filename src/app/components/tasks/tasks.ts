@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskService } from '../../services/task.service';
 import { Task, TaskStatus } from '../../models/task.model';
 import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form-dialog/task-form-dialog';
@@ -20,6 +21,7 @@ import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form
     MatChipsModule,
     MatTooltipModule,
     MatDialogModule,
+    DragDropModule,
   ],
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
@@ -59,6 +61,18 @@ export class Tasks {
   formatDate(date: Date | null): string {
     if (!date) return 'No due date';
     return new Date(date).toLocaleDateString();
+  }
+
+  drop(event: CdkDragDrop<Task[]>, status: TaskStatus): void {
+    if (event.previousContainer === event.container) {
+      // Reordering within the same column - not implementing ordering for now
+      // Just keep items in their current position
+      return;
+    } else {
+      // Moving between columns - update the task status
+      const task = event.previousContainer.data[event.previousIndex];
+      this.taskService.updateTaskStatus(task.id, status);
+    }
   }
 
   openAddTaskDialog(): void {

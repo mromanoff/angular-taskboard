@@ -26,9 +26,15 @@
         <h2>To Do</h2>
         <span class="count">{{ tasksByStatus().todo.length }}</span>
       </div>
-      <div class="column-content">
+      <div
+        class="column-content"
+        cdkDropList
+        #todoList="cdkDropList"
+        [cdkDropListData]="tasksByStatus().todo"
+        [cdkDropListConnectedTo]="[inProgressList, doneList]"
+        (cdkDropListDropped)="drop($event, 'todo')">
         @for (task of tasksByStatus().todo; track task.id) {
-          <mat-card class="task-card">
+          <mat-card class="task-card" cdkDrag>
             <mat-card-header>
               <mat-card-title>{{ task.title }}</mat-card-title>
               <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
@@ -84,9 +90,15 @@
         <h2>In Progress</h2>
         <span class="count">{{ tasksByStatus().inProgress.length }}</span>
       </div>
-      <div class="column-content">
+      <div
+        class="column-content"
+        cdkDropList
+        #inProgressList="cdkDropList"
+        [cdkDropListData]="tasksByStatus().inProgress"
+        [cdkDropListConnectedTo]="[todoList, doneList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
         @for (task of tasksByStatus().inProgress; track task.id) {
-          <mat-card class="task-card">
+          <mat-card class="task-card" cdkDrag>
             <mat-card-header>
               <mat-card-title>{{ task.title }}</mat-card-title>
               <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
@@ -148,9 +160,15 @@
         <h2>Done</h2>
         <span class="count">{{ tasksByStatus().done.length }}</span>
       </div>
-      <div class="column-content">
+      <div
+        class="column-content"
+        cdkDropList
+        #doneList="cdkDropList"
+        [cdkDropListData]="tasksByStatus().done"
+        [cdkDropListConnectedTo]="[todoList, inProgressList]"
+        (cdkDropListDropped)="drop($event, 'done')">
         @for (task of tasksByStatus().done; track task.id) {
-          <mat-card class="task-card done-card">
+          <mat-card class="task-card done-card" cdkDrag>
             <mat-card-header>
               <mat-card-title>{{ task.title }}</mat-card-title>
               <mat-chip [color]="getPriorityColor(task.priority)" class="priority-chip">
