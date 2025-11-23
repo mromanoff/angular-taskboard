@@ -1,59 +1,70 @@
-# AngularTaskboard
+# Angular Taskboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+A modern task management application built with Angular 21 and Material Design. Track your tasks with an intuitive drag-and-drop interface, organize by priority and status, and visualize your productivity with comprehensive analytics.
 
-## Development server
+## Features
+
+- **Kanban Board Interface**: Drag and drop tasks between To Do, In Progress, and Done columns
+- **Task Management**: Create, edit, and delete tasks with title, description, priority, and due dates
+- **Smart Filtering**: Filter tasks by priority, status, overdue status, or search by keywords
+- **Analytics Dashboard**: View task statistics and charts including completion rates and priority distribution
+- **Material Design**: Clean, modern UI with light/dark theme support
+- **Real-time Updates**: Instant UI updates using Angular signals for reactive state management
+
+## Development Server
 
 To start a local development server, run:
 
 ```bash
-ng serve
+npm start
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
 ## Building
 
-To build the project run:
+To build the project for production:
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+This will compile your project and store the build artifacts in the `dist/` directory. The production build is optimized for performance and speed.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+For development builds with file watching:
 
 ```bash
-ng test
+npm run watch
 ```
 
-## Running end-to-end tests
+## Running Tests
 
-For end-to-end (e2e) testing, run:
+To execute unit tests with Vitest:
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The project uses Vitest for fast, modern testing with comprehensive coverage reporting.
+
+## Technology Stack
+
+- **Angular 21**: Latest Angular framework with standalone components
+- **Angular Material**: Material Design components and theming
+- **Chart.js & ng2-charts**: Data visualization for analytics
+- **Angular CDK**: Drag-and-drop functionality
+- **RxJS**: Reactive programming for state management
+- **Vitest**: Modern, fast unit testing framework
+
+## Project Structure
+
+```
+src/app/
+├── components/       # UI components (tasks, dashboard, dialogs)
+├── services/        # Business logic (task service, theme service)
+└── models/          # TypeScript interfaces and types
+```
 
 ## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For more information on Angular development, visit the [Angular Documentation](https://angular.dev).
