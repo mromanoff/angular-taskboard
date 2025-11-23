@@ -4,8 +4,8 @@
 
 @include mat.core();
 
-// Define the theme using Angular Material 21 API (Material 3)
-$my-theme: mat.define-theme((
+// Define the light theme using Angular Material 21 API (Material 3)
+$light-theme: mat.define-theme((
   color: (
     theme-type: light,
     primary: mat.$violet-palette,
@@ -13,7 +13,22 @@ $my-theme: mat.define-theme((
   ),
 ));
 
-@include mat.all-component-themes($my-theme);
+// Define the dark theme
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$violet-palette,
+    tertiary: mat.$rose-palette,
+  ),
+));
+
+// Apply light theme by default
+@include mat.all-component-themes($light-theme);
+
+// Apply dark theme when body has dark-theme class
+body.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+}
 
 html, body {
   height: 100%;
@@ -22,4 +37,5 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
