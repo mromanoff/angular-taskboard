@@ -23,8 +23,11 @@ Path: /Users/mromanoff/Projects/angular-taskboard/
 Remote: git@github.com:mromanoff/angular-taskboard.git (SSH)
 Branch Strategy
 main - Production-ready code
-feature/* - Feature branches for each step
+feature/* - Feature branches for each step (when working locally)
+claude/* - Required prefix for branches when using Claude Code (container/web sessions)
 Each step = separate feature branch → PR → review → merge
+
+⚠️ Important: When working in Claude Code container/web sessions, all branches MUST start with `claude/` prefix to allow push operations. Branches without this prefix will fail with HTTP 403 errors.
 ✅ Completed Steps
 Step 1: Initialize Angular Project ✓
 Branch: main Commit: b57423e - feat: initialize Angular 21 project with routing and SCSS
@@ -63,15 +66,17 @@ Current Issue:
 
 Container cannot push to GitHub (repository not authorized in session)
 User needs to apply changes locally OR authorize container access
-🚀 Remaining Steps (12 steps)
-Step 3: Project Structure & Main Layout
-Branch: feature/project-structure Tasks:
+Step 3: Project Structure & Main Layout ✓
+Branch: claude/setup-taskboard-repo-0196RBXo5Govr8WVmWrvDF94 (merged from feature/project-structure)
+Commit: 7db9ac7 - feat: set up project structure and main layout
 
-Create folder structure (components/, services/, models/, shared/)
-Build main layout component with Material toolbar
-Add navigation structure
-Configure routing for different views
-Commit: feat: set up project structure and main layout
+What was done:
+
+Created folder structure (components/, services/, models/, shared/)
+Built main layout component with Material toolbar
+Added dashboard and tasks components
+Configured routing structure
+🚀 Remaining Steps (11 steps)
 Step 4: Task Data Model & Service
 Branch: feature/task-service Tasks:
 
@@ -191,10 +196,14 @@ Accent: Violet (mat.$violet-palette)
 Warn: Red (mat.$red-palette)
 🔄 Workflow for Each Step
 Create feature branch from main
+  - Local: `git checkout -b feature/branch-name`
+  - Claude Code: `git checkout -b claude/branch-name-sessionid`
 Implement changes in container or locally
 Test build: npm run build
 Commit changes with descriptive message
-Push to GitHub: git push -u origin feature/branch-name
+Push to GitHub:
+  - Local: `git push -u origin feature/branch-name`
+  - Claude Code: `git push -u origin claude/branch-name-sessionid`
 Create Pull Request on GitHub
 Review changes in PR
 Merge to main after approval
@@ -216,11 +225,12 @@ Testing Before Commit
 npm run build
 npm test  # When tests are added
 🎯 Next Action
-Immediate Next Step: Complete Step 2 - Push feature/angular-material-setup branch
+Immediate Next Step: Push Step 3 changes to GitHub and create PR
 
-Option A: Apply changes locally on Mac and push Option B: Authorize container to push to GitHub
+Branch: claude/setup-taskboard-repo-0196RBXo5Govr8WVmWrvDF94
+Command: `git push -u origin claude/setup-taskboard-repo-0196RBXo5Govr8WVmWrvDF94`
 
-After Step 2 PR is merged, proceed to Step 3: Project Structure & Main Layout
+After Step 3 PR is merged, proceed to Step 4: Task Data Model & Service
 
 📧 Repository Access
 Container Session:
@@ -242,4 +252,4 @@ Project is complete when:
 ✅ Code is clean and well-organized
 ✅ Responsive on all devices
 ✅ Professional portfolio piece ready to showcase
-Last Updated: 2025-11-23 Current Step: 2/14 complete
+Last Updated: 2025-11-23 Current Step: 3/14 complete
