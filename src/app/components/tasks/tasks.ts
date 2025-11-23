@@ -6,9 +6,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TaskService } from '../../services/task.service';
-import { Task, TaskStatus } from '../../models/task.model';
+import { TaskService, SortOption } from '../../services/task.service';
+import { Task, TaskStatus, TaskPriority } from '../../models/task.model';
 import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form-dialog/task-form-dialog';
 
 @Component({
@@ -21,6 +25,10 @@ import { TaskFormDialog, TaskFormDialogData, TaskFormResult } from '../task-form
     MatChipsModule,
     MatTooltipModule,
     MatDialogModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    FormsModule,
     DragDropModule,
   ],
   templateUrl: './tasks.html',
@@ -33,6 +41,12 @@ export class Tasks {
   // Expose computed signals for template
   tasksByStatus = this.taskService.tasksByStatus;
   taskStats = this.taskService.taskStats;
+
+  // Expose filter and sort signals
+  filterPriority = this.taskService.filterPriority;
+  filterStatus = this.taskService.filterStatus;
+  filterOverdue = this.taskService.filterOverdue;
+  sortOption = this.taskService.sortOption;
 
   deleteTask(id: string): void {
     if (confirm('Are you sure you want to delete this task?')) {
@@ -99,5 +113,25 @@ export class Tasks {
         this.taskService.updateTask(task.id, result);
       }
     });
+  }
+
+  onFilterPriorityChange(priority: TaskPriority | 'all'): void {
+    this.taskService.setFilterPriority(priority);
+  }
+
+  onFilterStatusChange(status: TaskStatus | 'all'): void {
+    this.taskService.setFilterStatus(status);
+  }
+
+  onFilterOverdueChange(checked: boolean): void {
+    this.taskService.setFilterOverdue(checked);
+  }
+
+  onSortOptionChange(option: SortOption): void {
+    this.taskService.setSortOption(option);
+  }
+
+  clearFilters(): void {
+    this.taskService.clearFilters();
   }
 }
