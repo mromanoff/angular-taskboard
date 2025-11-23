@@ -64,12 +64,34 @@
 
 .filter-sort-container {
   display: flex;
+  flex-direction: column;
   gap: 24px;
   margin-bottom: 24px;
   padding: 20px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .search-container {
+    width: 100%;
+
+    .search-field {
+      width: 100%;
+
+      mat-icon {
+        color: #757575;
+      }
+    }
+  }
+
+  .filters-and-sort {
+    display: flex;
+    gap: 24px;
+
+    > * {
+      flex: 1;
+    }
+  }
 
   .filters {
     flex: 1;
