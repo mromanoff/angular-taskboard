@@ -73,6 +73,32 @@
             Show Only Overdue
           </mat-checkbox>
 
+          <!-- Tag Filter -->
+          @if (allTags().length > 0) {
+            <div class="tag-filter">
+              <label class="tag-filter-label">
+                <mat-icon>label</mat-icon>
+                Filter by Tags:
+              </label>
+              <div class="tag-chips">
+                @for (tag of allTags(); track tag) {
+                  <mat-chip
+                    [class.selected]="isTagSelected(tag)"
+                    (click)="toggleTagFilter(tag)"
+                    class="tag-chip">
+                    {{ tag }}
+                    @if (isTagSelected(tag)) {
+                      <mat-icon>check</mat-icon>
+                    }
+                  </mat-chip>
+                }
+              </div>
+              @if (filterTags().length > 0) {
+                <span class="active-filters-count">{{ filterTags().length }} tag(s) selected</span>
+              }
+            </div>
+          }
+
           <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
             <mat-icon>clear</mat-icon>
             Clear Filters

@@ -48,8 +48,12 @@ export class Tasks {
   filterPriority = this.taskService.filterPriority;
   filterStatus = this.taskService.filterStatus;
   filterOverdue = this.taskService.filterOverdue;
+  filterTags = this.taskService.filterTags;
   sortOption = this.taskService.sortOption;
   searchQuery = this.taskService.searchQuery;
+
+  // Expose all available tags
+  allTags = this.taskService.allTags;
 
   deleteTask(id: string): void {
     if (confirm('Are you sure you want to delete this task?')) {
@@ -147,5 +151,20 @@ export class Tasks {
 
   clearSearch(): void {
     this.taskService.setSearchQuery('');
+  }
+
+  toggleTagFilter(tag: string): void {
+    const currentTags = this.filterTags();
+    if (currentTags.includes(tag)) {
+      // Remove tag from filter
+      this.taskService.setFilterTags(currentTags.filter(t => t !== tag));
+    } else {
+      // Add tag to filter
+      this.taskService.setFilterTags([...currentTags, tag]);
+    }
+  }
+
+  isTagSelected(tag: string): boolean {
+    return this.filterTags().includes(tag);
   }
 }
