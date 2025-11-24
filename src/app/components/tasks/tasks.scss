@@ -389,6 +389,110 @@
   border-radius: 8px;
 }
 
+// Dark theme overrides
+:host-context(body.dark-theme) {
+  .task-stats {
+    .stat {
+      background-color: #2a2a2a;
+
+      &.todo {
+        background-color: #1e3a5f;
+        color: #64b5f6;
+      }
+
+      &.in-progress {
+        background-color: #4a3800;
+        color: #ffb74d;
+      }
+
+      &.done {
+        background-color: #1b4332;
+        color: #66bb6a;
+      }
+
+      &.overdue {
+        background-color: #4a1f1f;
+        color: #ef5350;
+      }
+    }
+  }
+
+  .filter-sort-container {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    .filters h3,
+    .sort h3 {
+      color: #e0e0e0;
+    }
+
+    .search-field mat-icon {
+      color: #b0b0b0;
+    }
+  }
+
+  .kanban-column {
+    background-color: #242424;
+
+    .column-content {
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+
+        &:hover {
+          background: #777;
+        }
+      }
+    }
+  }
+
+  .task-card {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    &.done-card {
+      mat-card-title {
+        color: #b0b0b0;
+      }
+    }
+
+    mat-card-content {
+      .task-description {
+        color: #b0b0b0;
+      }
+
+      .task-meta .due-date {
+        color: #b0b0b0;
+
+        &.overdue {
+          color: #ef5350;
+        }
+      }
+    }
+
+    mat-card-actions {
+      border-top: 1px solid #3a3a3a;
+    }
+  }
+
+  .empty-state {
+    color: #757575;
+  }
+
+  .cdk-drag-placeholder {
+    background: #3a3a3a;
+    border-color: #555;
+  }
+
+  .column-content.cdk-drop-list-receiving {
+    background-color: rgba(103, 126, 234, 0.2);
+    border-color: #667eea;
+  }
+}
+
 // Responsive design
 @media (max-width: 1200px) {
   .kanban-board {
