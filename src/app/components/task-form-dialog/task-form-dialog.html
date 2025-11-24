@@ -2,17 +2,14 @@
 
 <mat-dialog-content>
   <form [formGroup]="taskForm" class="task-form">
+    <!-- Basic Information -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
-      <input matInput formControlName="title" placeholder="Enter task title" required>
+      <input matInput formControlName="title" placeholder="Enter task title" required />
       @if (title?.invalid && title?.touched) {
         <mat-error>
-          @if (title?.hasError('required')) {
-            Title is required
-          }
-          @if (title?.hasError('minlength')) {
-            Title must be at least 3 characters
-          }
+          @if (title?.hasError('required')) { Title is required } @if
+          (title?.hasError('minlength')) { Title must be at least 3 characters }
         </mat-error>
       }
     </mat-form-field>
@@ -27,12 +24,8 @@
         required></textarea>
       @if (description?.invalid && description?.touched) {
         <mat-error>
-          @if (description?.hasError('required')) {
-            Description is required
-          }
-          @if (description?.hasError('minlength')) {
-            Description must be at least 10 characters
-          }
+          @if (description?.hasError('required')) { Description is required } @if
+          (description?.hasError('minlength')) { Description must be at least 10 characters }
         </mat-error>
       }
     </mat-form-field>
@@ -63,10 +56,142 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Due Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dueDate" placeholder="Select due date">
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="dueDate"
+        placeholder="Select due date" />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+
+    <!-- Tags -->
+    <div class="section">
+      <h3 class="section-title">
+        <mat-icon>label</mat-icon>
+        Tags
+      </h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Add tags</mat-label>
+        <mat-chip-grid #chipGrid>
+          @for (tag of tags(); track tag) {
+            <mat-chip-row (removed)="removeTag(tag)">
+              {{ tag }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          placeholder="Type and press Enter..."
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addTag($event)" />
+        <mat-hint>Press Enter or comma to add tags</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- Subtasks -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>checklist</mat-icon>
+          <span>Subtasks</span>
+          @if (subtasks().length > 0) {
+            <span class="badge">{{ getSubtaskProgress() }}% complete</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="subtasks-section">
+        <div class="add-subtask">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>New subtask</mat-label>
+            <input
+              matInput
+              [formControl]="newSubtaskControl"
+              placeholder="Enter subtask title"
+              (keyup.enter)="addSubtask()" />
+          </mat-form-field>
+          <button mat-mini-fab color="primary" (click)="addSubtask()" type="button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
+        @if (subtasks().length > 0) {
+          <div class="subtasks-list">
+            @for (subtask of subtasks(); track subtask.id) {
+              <div class="subtask-item">
+                <mat-checkbox
+                  [checked]="subtask.completed"
+                  (change)="toggleSubtask(subtask)">
+                  <span [class.completed]="subtask.completed">{{ subtask.title }}</span>
+                </mat-checkbox>
+                <button mat-icon-button color="warn" (click)="deleteSubtask(subtask.id)" type="button">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-message">No subtasks yet. Add one above!</p>
+        }
+      </div>
+    </mat-expansion-panel>
+
+    <!-- Comments -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>comment</mat-icon>
+          <span>Comments</span>
+          @if (comments().length > 0) {
+            <span class="badge">{{ comments().length }}</span>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="comments-section">
+        <div class="add-comment">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Add a comment</mat-label>
+            <textarea
+              matInput
+              [formControl]="newCommentControl"
+              placeholder="Write your comment..."
+              rows="2"></textarea>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="addComment()" type="button">
+            <mat-icon>send</mat-icon>
+            Add Comment
+          </button>
+        </div>
+
+        @if (comments().length > 0) {
+          <div class="comments-list">
+            @for (comment of comments(); track comment.id) {
+              <div class="comment-item">
+                <div class="comment-header">
+                  <span class="comment-author">{{ comment.author }}</span>
+                  <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="deleteComment(comment.id)"
+                    type="button">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+                <p class="comment-text">{{ comment.text }}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-message">No comments yet. Add one above!</p>
+        }
+      </div>
+    </mat-expansion-panel>
   </form>
 </mat-dialog-content>
 

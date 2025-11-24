@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 500px;
+  min-width: 600px;
   padding: 1rem 0;
 
   @media (max-width: 600px) {
@@ -31,7 +31,7 @@
 
 mat-dialog-content {
   overflow-y: auto;
-  max-height: 70vh;
+  max-height: 75vh;
 }
 
 mat-dialog-actions {
@@ -44,4 +44,203 @@ h2[mat-dialog-title] {
   padding: 1.5rem 1.5rem 1rem;
   font-size: 1.5rem;
   font-weight: 500;
+}
+
+// Tags section
+.section {
+  margin: 1.5rem 0;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Expansion panels
+mat-expansion-panel {
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .badge {
+      margin-left: auto;
+      padding: 2px 8px;
+      background-color: #3f51b5;
+      color: white;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// Subtasks section
+.subtasks-section {
+  padding: 1rem 0;
+
+  .add-subtask {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .subtasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .subtask-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background-color: #fafafa;
+
+      mat-checkbox {
+        flex: 1;
+      }
+
+      .completed {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .empty-message {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.54);
+    font-style: italic;
+    padding: 1rem;
+  }
+}
+
+// Comments section
+.comments-section {
+  padding: 1rem 0;
+
+  .add-comment {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    button {
+      align-self: flex-end;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .comment-item {
+      padding: 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #fafafa;
+
+      .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+
+        .comment-author {
+          font-weight: 600;
+          color: #3f51b5;
+        }
+
+        .comment-date {
+          color: rgba(0, 0, 0, 0.54);
+          font-size: 0.75rem;
+        }
+
+        button {
+          margin-left: auto;
+        }
+      }
+
+      .comment-text {
+        margin: 0;
+        color: rgba(0, 0, 0, 0.87);
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .empty-message {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.54);
+    font-style: italic;
+    padding: 1rem;
+  }
+}
+
+// Dark theme support
+:host-context(body.dark-theme) {
+  .section .section-title {
+    color: #e0e0e0;
+  }
+
+  .subtasks-section {
+    .subtasks-list .subtask-item {
+      background-color: #2a2a2a;
+      border-color: #3a3a3a;
+    }
+  }
+
+  .comments-section {
+    .comments-list .comment-item {
+      background-color: #2a2a2a;
+      border-color: #3a3a3a;
+
+      .comment-text {
+        color: #e0e0e0;
+      }
+    }
+  }
+
+  .empty-message {
+    color: #b0b0b0;
+  }
 }
