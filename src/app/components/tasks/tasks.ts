@@ -94,7 +94,8 @@ export class Tasks {
 
   openAddTaskDialog(): void {
     const dialogRef = this.dialog.open(TaskFormDialog, {
-      width: '600px',
+      width: '700px',
+      maxWidth: '90vw',
       data: { mode: 'create' } as TaskFormDialogData,
     });
 
@@ -107,7 +108,8 @@ export class Tasks {
 
   openEditTaskDialog(task: Task): void {
     const dialogRef = this.dialog.open(TaskFormDialog, {
-      width: '600px',
+      width: '700px',
+      maxWidth: '90vw',
       data: { task, mode: 'edit' } as TaskFormDialogData,
     });
 
