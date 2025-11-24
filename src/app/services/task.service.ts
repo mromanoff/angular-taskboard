@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
-import { Task, TaskStatus, TaskPriority } from '../models/task.model';
+import { Task, TaskStatus, TaskPriority, Subtask, Comment } from '../models/task.model';
 
 export type SortOption = 'priority-desc' | 'priority-asc' | 'due-date-asc' | 'due-date-desc' | 'created-desc' | 'created-asc';
 
@@ -23,6 +23,7 @@ export class TaskService {
   private filterPrioritySignal = signal<TaskPriority | 'all'>('all');
   private filterStatusSignal = signal<TaskStatus | 'all'>('all');
   private filterOverdueSignal = signal<boolean>(false);
+  private filterTagsSignal = signal<string[]>([]);
   private sortOptionSignal = signal<SortOption>('priority-desc');
   private searchQuerySignal = signal<string>('');
 
@@ -30,6 +31,7 @@ export class TaskService {
   readonly filterPriority = this.filterPrioritySignal.asReadonly();
   readonly filterStatus = this.filterStatusSignal.asReadonly();
   readonly filterOverdue = this.filterOverdueSignal.asReadonly();
+  readonly filterTags = this.filterTagsSignal.asReadonly();
   readonly sortOption = this.sortOptionSignal.asReadonly();
   readonly searchQuery = this.searchQuerySignal.asReadonly();
 
@@ -39,6 +41,7 @@ export class TaskService {
     const filterPriority = this.filterPrioritySignal();
     const filterStatus = this.filterStatusSignal();
     const filterOverdue = this.filterOverdueSignal();
+    const filterTags = this.filterTagsSignal();
     const sortOption = this.sortOptionSignal();
     const searchQuery = this.searchQuerySignal().toLowerCase().trim();
 
@@ -58,12 +61,20 @@ export class TaskService {
       );
     }
 
+    // Apply tag filter
+    if (filterTags.length > 0) {
+      tasks = tasks.filter(task =>
+        filterTags.every(tag => task.tags?.includes(tag) || false)
+      );
+    }
+
     // Apply search filter
     if (searchQuery) {
       tasks = tasks.filter(task => {
         const titleMatch = task.title.toLowerCase().includes(searchQuery);
         const descriptionMatch = task.description?.toLowerCase().includes(searchQuery);
-        return titleMatch || descriptionMatch;
+        const tagsMatch = task.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) || false;
+        return titleMatch || descriptionMatch || tagsMatch;
       });
     }
 
@@ -140,7 +151,14 @@ export class TaskService {
 
   addTask(taskData: Omit<Task, 'id' | 'createdAt'>): Task {
     const newTask: Task = {
-      ...taskData,
+      title: taskData.title,
+      description: taskData.description,
+      priority: taskData.priority,
+      status: taskData.status,
+      dueDate: taskData.dueDate,
+      tags: taskData.tags || [],
+      subtasks: taskData.subtasks || [],
+      comments: taskData.comments || [],
       id: this.generateId(),
       createdAt: new Date()
     };
@@ -195,11 +213,96 @@ export class TaskService {
     this.searchQuerySignal.set(query);
   }
 
+  setFilterTags(tags: string[]): void {
+    this.filterTagsSignal.set(tags);
+  }
+
   clearFilters(): void {
     this.filterPrioritySignal.set('all');
     this.filterStatusSignal.set('all');
     this.filterOverdueSignal.set(false);
+    this.filterTagsSignal.set([]);
     this.searchQuerySignal.set('');
+  }
+
+  // Get all unique tags from all tasks
+  readonly allTags = computed(() => {
+    const tasks = this.tasksSignal();
+    const tagSet = new Set<string>();
+    tasks.forEach(task => {
+      task.tags?.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  });
+
+  // Subtask management
+  addSubtask(taskId: string, title: string): Subtask | undefined {
+    const task = this.getTaskById(taskId);
+    if (!task) return undefined;
+
+    const newSubtask: Subtask = {
+      id: this.generateId(),
+      title,
+      completed: false,
+      createdAt: new Date()
+    };
+
+    this.updateTask(taskId, {
+      subtasks: [...(task.subtasks || []), newSubtask]
+    });
+
+    return newSubtask;
+  }
+
+  toggleSubtask(taskId: string, subtaskId: string): boolean {
+    const task = this.getTaskById(taskId);
+    if (!task || !task.subtasks) return false;
+
+    const updatedSubtasks = task.subtasks.map(subtask =>
+      subtask.id === subtaskId
+        ? { ...subtask, completed: !subtask.completed }
+        : subtask
+    );
+
+    this.updateTask(taskId, { subtasks: updatedSubtasks });
+    return true;
+  }
+
+  deleteSubtask(taskId: string, subtaskId: string): boolean {
+    const task = this.getTaskById(taskId);
+    if (!task || !task.subtasks) return false;
+
+    const updatedSubtasks = task.subtasks.filter(subtask => subtask.id !== subtaskId);
+    this.updateTask(taskId, { subtasks: updatedSubtasks });
+    return true;
+  }
+
+  // Comment management
+  addComment(taskId: string, text: string, author: string = 'User'): Comment | undefined {
+    const task = this.getTaskById(taskId);
+    if (!task) return undefined;
+
+    const newComment: Comment = {
+      id: this.generateId(),
+      text,
+      author,
+      createdAt: new Date()
+    };
+
+    this.updateTask(taskId, {
+      comments: [...(task.comments || []), newComment]
+    });
+
+    return newComment;
+  }
+
+  deleteComment(taskId: string, commentId: string): boolean {
+    const task = this.getTaskById(taskId);
+    if (!task || !task.comments) return false;
+
+    const updatedComments = task.comments.filter(comment => comment.id !== commentId);
+    this.updateTask(taskId, { comments: updatedComments });
+    return true;
   }
 
   private generateId(): string {
@@ -240,73 +343,103 @@ export class TaskService {
         id: 'task-1',
         title: 'Set up Angular Material',
         description: 'Install and configure Angular Material with custom theme',
-        priority: 'high',
-        status: 'done',
+        priority: 'high' as TaskPriority,
+        status: 'done' as TaskStatus,
         dueDate: new Date('2025-11-20'),
-        createdAt: new Date('2025-11-18')
+        createdAt: new Date('2025-11-18'),
+        tags: ['angular', 'setup', 'ui'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-2',
         title: 'Create project structure',
         description: 'Set up folder structure with components, services, and models',
-        priority: 'high',
-        status: 'done',
+        priority: 'high' as TaskPriority,
+        status: 'done' as TaskStatus,
         dueDate: new Date('2025-11-21'),
-        createdAt: new Date('2025-11-19')
+        createdAt: new Date('2025-11-19'),
+        tags: ['angular', 'setup'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-3',
         title: 'Implement task service',
         description: 'Build TaskService with CRUD operations and signal-based state management',
-        priority: 'high',
-        status: 'in-progress',
+        priority: 'high' as TaskPriority,
+        status: 'in-progress' as TaskStatus,
         dueDate: new Date('2025-11-23'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'service', 'signals'],
+        subtasks: [
+          { id: 'subtask-1', title: 'Create service skeleton', completed: true, createdAt: new Date('2025-11-22') },
+          { id: 'subtask-2', title: 'Add CRUD operations', completed: true, createdAt: new Date('2025-11-22') },
+          { id: 'subtask-3', title: 'Implement filtering', completed: false, createdAt: new Date('2025-11-22') }
+        ],
+        comments: [
+          { id: 'comment-1', text: 'Using Angular signals for reactive state', author: 'User', createdAt: new Date('2025-11-22') }
+        ]
       },
       {
         id: 'task-4',
         title: 'Create task list component',
         description: 'Display tasks using Material cards with status badges and action buttons',
-        priority: 'medium',
-        status: 'todo',
+        priority: 'medium' as TaskPriority,
+        status: 'todo' as TaskStatus,
         dueDate: new Date('2025-11-24'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'component', 'ui'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-5',
         title: 'Add task form with dialog',
         description: 'Create reactive form for adding and editing tasks with validation',
-        priority: 'medium',
-        status: 'todo',
+        priority: 'medium' as TaskPriority,
+        status: 'todo' as TaskStatus,
         dueDate: new Date('2025-11-25'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'forms', 'ui'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-6',
         title: 'Implement drag and drop',
         description: 'Enable task reordering and status changes via drag and drop',
-        priority: 'medium',
-        status: 'todo',
+        priority: 'medium' as TaskPriority,
+        status: 'todo' as TaskStatus,
         dueDate: new Date('2025-11-27'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'cdk', 'ux'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-7',
         title: 'Add filtering and sorting',
         description: 'Implement filters for status/priority and sorting options',
-        priority: 'low',
-        status: 'todo',
+        priority: 'low' as TaskPriority,
+        status: 'todo' as TaskStatus,
         dueDate: new Date('2025-11-28'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'feature'],
+        subtasks: [],
+        comments: []
       },
       {
         id: 'task-8',
         title: 'Create theme toggle',
         description: 'Add dark/light theme toggle with localStorage persistence',
-        priority: 'low',
-        status: 'todo',
+        priority: 'low' as TaskPriority,
+        status: 'todo' as TaskStatus,
         dueDate: new Date('2025-11-29'),
-        createdAt: new Date('2025-11-22')
+        createdAt: new Date('2025-11-22'),
+        tags: ['angular', 'theme', 'ux'],
+        subtasks: [],
+        comments: []
       }
     ];
   }
