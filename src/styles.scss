@@ -28,6 +28,8 @@ $dark-theme: mat.define-theme((
 // Apply dark theme when body has dark-theme class
 body.dark-theme {
   @include mat.all-component-colors($dark-theme);
+  background-color: #1a1a1a;
+  color: #e0e0e0;
 }
 
 html, body {

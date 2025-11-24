@@ -246,6 +246,33 @@
   }
 }
 
+// Dark theme overrides
+:host-context(body.dark-theme) {
+  .stats-grid .stat-card {
+    background-color: #2a2a2a;
+
+    &:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .stat-info .stat-label {
+      color: #b0b0b0;
+    }
+  }
+
+  .charts-section .charts-grid .chart-card {
+    background-color: #2a2a2a;
+
+    &:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    mat-card-header mat-card-title {
+      color: #e0e0e0;
+    }
+  }
+}
+
 // Responsive Design
 @media (max-width: 1024px) {
   .stats-grid {
