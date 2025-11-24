@@ -87,9 +87,9 @@ export class TaskFormDialog {
 
     // Initialize tags, subtasks, and comments from task data
     if (data.task) {
-      this.tags.set([...data.task.tags]);
-      this.subtasks.set([...data.task.subtasks]);
-      this.comments.set([...data.task.comments]);
+      this.tags.set(data.task.tags ?? []);
+      this.subtasks.set(data.task.subtasks ?? []);
+      this.comments.set(data.task.comments ?? []);
     }
   }
 
